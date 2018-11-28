@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "gitlab.com/mpwalkerdine/vue-ts-grpc/server/pb";
+
+service ExampleService {
+    rpc CreateExample (CreateExampleRequest) returns (Example);
+    rpc ListExamples (ListExamplesRequest) returns (ListExamplesResponse);
+    rpc DeleteExample(DeleteExampleRequest) returns (Empty);
+}
+
+message CreateExampleRequest {
+    string parent = 1;
+    Example example = 2;
+}
+
+message Example {
+    string name = 1;
+    string text = 2;
+}
+
+message ListExamplesRequest {
+  string parent = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListExamplesResponse {
+  repeated Example examples = 1;
+  string next_page_token = 2;
+}
+
+message DeleteExampleRequest {
+    string name = 1;
+}
+
+message Empty {}
