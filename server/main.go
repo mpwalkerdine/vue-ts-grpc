@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 
+	"gitlab.com/mpwalkerdine/vue-ts-grpc/server/pb"
 	"google.golang.org/grpc"
 )
 
@@ -16,6 +17,7 @@ func main() {
 	s := &server{
 		port:       ":" + *port,
 		grpcServer: gs,
+		examples:   map[string]*pb.Example{},
 	}
 
 	log.Fatal(s.Run())
