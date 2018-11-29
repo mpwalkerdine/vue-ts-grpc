@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { RootState, Example, ExampleMap } from './types';
+import { RootState } from './types';
 
 import {
   ListExamplesRequest,
