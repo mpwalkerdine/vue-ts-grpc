@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"context"
 	"net/http"
 	"time"
@@ -17,11 +18,17 @@ import (
 
 type server struct {
 	port       string
+	webPort    string
 	grpcServer *grpc.Server
 	examples   map[string]*pb.Example
 }
 
 func (s *server) Run() error {
+	lis, err := net.Listen("tcp", s.port)
+	if err != nil {
+		return err
+	}
+
 	options := []grpcweb.Option{
 		// gRPC-Web compatibility layer with CORS configured to accept on every request
 		grpcweb.WithCorsForRegisteredEndpointsOnly(false),
@@ -37,12 +44,17 @@ func (s *server) Run() error {
 		wrappedGrpc.ServeHTTP(resp, req)
 	})
 	httpServer := &http.Server{
-		Addr:           s.port,
+		Addr:           s.webPort,
 		Handler:        handler,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+
+	go func(){
+		defer s.grpcServer.Stop()
+		s.grpcServer.Serve(lis)
+	}()
 
 	defer httpServer.Shutdown(nil)
 

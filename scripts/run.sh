@@ -4,6 +4,7 @@ set -e
 
 UIPORT=8080
 SERVERPORT=8081
+GRPCPORT=8082
 
 # Go "up one" to root of the repository
 SOURCE="${BASH_SOURCE[0]}"
@@ -22,10 +23,11 @@ killPort() {
 # Kill off any old processes
 killPort $UIPORT
 killPort $SERVERPORT
+killPort $GRPCPORT
 
 # Spawn backend server and exit when frontend dev server is killed with this script
 trap "killPort $SERVERPORT" EXIT
-bin/example-server -port $SERVERPORT &
+bin/example-server -webport $SERVERPORT -port $GRPCPORT &
 
 # Start the frontend dev server
 cd $DIR/client
